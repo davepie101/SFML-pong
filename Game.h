@@ -4,16 +4,16 @@
 
 class Game {
 
-	public:
-		static void Start();  //static functions can only call and access static class data members. Using it for global interface
+	public: //using static for a global
+		static void Start();  
 
 	private:
-		static bool isExiting();
+		static bool IsExiting();  
 		static void GameLoop();
 
-		enum Gamestate { Uninitialized, ShowingSplash, Paused, ShowingMenu, Playing, Exiting }; //state driven
+		enum GameState { Uninitialized, ShowingSplash, Paused, ShowingMenu, Playing, Exiting }; //state driven
 
 		static GameState _gameState; 
 		static sf::RenderWindow _mainWindow;
 
-}
+};
