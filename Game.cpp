@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Game.h"
+#include "MainMenu.h"
+#include "SplashScreen.h"
 
 void Game::Start(void) {  //only public method, call this to get the game started
 	if (_gameState != Uninitialized) return;  //To ensure that Game::Start is only called once
@@ -26,13 +28,13 @@ bool Game::IsExiting() { //Exiting state function
 
 void Game::GameLoop() { 
 	sf::Event currentEvent;
-	while(_mainWindow.pollEvent(currentEvent)) {
+	while(_mainWindow.pollEvent(currentEvent)) { //Polls for system based events and assigns it to currentEvent if it exists. Can be multiple events in the queue, so it will loop constantly until all events are polled.
 		switch(_gameState) {
 			case Game::Playing: {
-				_mainWindow.clear(sf::Color(255,0,0));
-				_mainWindow.display();
+				_mainWindow.clear(sf::Color(255,0,0)); //Clears the window with a single color.
+				_mainWindow.display();  //Display the window. 
 
-				if (currentEvent.type == sf::Event::Closed) {
+				if (currentEvent.type == sf::Event::Closed) { //closed requested event: we close the window.
 					_gameState = Game::Exiting;
 				}
 				break;
