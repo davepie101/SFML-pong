@@ -7,7 +7,7 @@ void Game::Start(void) {  //only public method, call this to get the game starte
 	if (_gameState != Uninitialized) return;  //To ensure that Game::Start is only called once
 
 	_mainWindow.create(sf::VideoMode(1024, 768, 32), "Pong!"); //Creating the main window at a resolution of 1024x768 at 32bpp color with the title "Pong!"
-	_gameState = Game::Playing; //Switch to Playing state
+	_gameState = Game::ShowingSplash; //Switch to ShowingSplash state
 
 	while(!IsExiting()) { 
 		GameLoop();
@@ -26,20 +26,49 @@ bool Game::IsExiting() { //Exiting state function
 	}
 }
 
-void Game::GameLoop() { 
-	sf::Event currentEvent;
-	while(_mainWindow.pollEvent(currentEvent)) { //Polls for system based events and assigns it to currentEvent if it exists. Can be multiple events in the queue, so it will loop constantly until all events are polled.
-		switch(_gameState) {
-			case Game::Playing: {
-				_mainWindow.clear(sf::Color(255,0,0)); //Clears the window with a single color.
-				_mainWindow.display();  //Display the window. 
-
-				if (currentEvent.type == sf::Event::Closed) { //closed requested event: we close the window.
-					_gameState = Game::Exiting;
-				}
-				break;
-			}
+void Game::GameLoop() {
+	switch(_gameState) {
+		case Game::ShowingMenu: {
+			ShowMenu();
+			break;
 		}
+		case Game::ShowingSplash: {
+			ShowSplashScreen();
+			break;
+		}
+		case Game::Playing: {
+			sf::Event currentEvent;
+			while(_mainWindow.pollEvent(currentEvent)) {
+				_mainWindow.clear(sf::Color(0,0,0));
+				_mainWindow.display();
+				
+				if(currentEvent.type == sf::Event::Closed) _gameState = Game::Exiting; //Closed requested event and exit game.
+
+				if(currentEvent.type == sf::Event::KeyPressed) { //If escape key is pressed, return to menu
+					if(currentEvent.key.code == sf::Keyboard::Escape) ShowMenu();
+				}
+			}
+			break;
+		}
+	}
+}
+
+void Game::ShowSplashScreen() { //Calls SplashScreen's Show function to render splashscreen
+	SplashScreen splashScreen; 
+	splashScreen.Show(_mainWindow);
+	_gameState = Game::ShowingMenu;
+}
+
+void Game::ShowMenu() { //Renders menu
+	MainMenu mainMenu;
+	MainMenu::MenuResult result = mainMenu.Show(_mainWindow);
+	switch(result) { //Alters gamestate depending on where button is pressed
+		case MainMenu::Exit:
+			_gameState = Game::Exiting;
+			break;
+		case MainMenu::Play:
+			_gameState = Game::Playing;
+			break;
 	}
 }
 
