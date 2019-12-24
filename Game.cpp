@@ -7,6 +7,10 @@ void Game::Start(void) {  //only public method, call this to get the game starte
 	if (_gameState != Uninitialized) return;  //To ensure that Game::Start is only called once
 
 	_mainWindow.create(sf::VideoMode(1024, 768, 32), "Pong!"); //Creating the main window at a resolution of 1024x768 at 32bpp color with the title "Pong!"
+
+	_player1.Load("./pictures/paddle.png"); //Load paddle image 
+	_player1.SetPosition((1024/2) - 45, 700); //Sets paddle image to certain position
+
 	_gameState = Game::ShowingSplash; //Switch to ShowingSplash state
 
 	while(!IsExiting()) { 
@@ -40,7 +44,8 @@ void Game::GameLoop() {
 			sf::Event currentEvent;
 			while(_mainWindow.pollEvent(currentEvent)) {
 				_mainWindow.clear(sf::Color(0,0,0));
-				_mainWindow.display();
+				_player1.Draw(_mainWindow);	//Draws itself to the window
+				_mainWindow.display(); //Render everything drawn so far
 				
 				if(currentEvent.type == sf::Event::Closed) _gameState = Game::Exiting; //Closed requested event and exit game.
 
@@ -74,3 +79,4 @@ void Game::ShowMenu() { //Renders menu
 
 Game::GameState Game::_gameState = Uninitialized; //initializing GameState and assigning it a default value of Unitialized
 sf::RenderWindow Game::_mainWindow;
+PlayerPaddle Game::_player1;

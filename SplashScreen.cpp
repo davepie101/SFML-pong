@@ -4,7 +4,7 @@
 void SplashScreen::Show(sf::RenderWindow &renderWindow) {
 	sf::Texture image; //texture loads the pixel data
 
-	if(image.loadFromFile("Splashscreen.png") != true) { //Load splashscreen image and returns if it doesn't exist
+	if(image.loadFromFile("./pictures/Splashscreen.png") != true) { //Load splashscreen image and returns if it doesn't exist
 		return;
 	}
 
