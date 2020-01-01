@@ -8,9 +8,11 @@ void Game::Start(void) {  //only public method, call this to get the game starte
 
 	_mainWindow.create(sf::VideoMode(1024, 768, 32), "Pong!"); //Creating the main window at a resolution of 1024x768 at 32bpp color with the title "Pong!"
 
-	_player1.Load("./pictures/paddle.png"); //Load paddle image 
-	_player1.SetPosition((1024/2) - 45, 700); //Sets paddle image to certain position
+	PlayerPaddle *player1 = new PlayerPaddle(); //Creates a new PlayerPaddle object inherited from VisibleGameObject
+	player1->Load("./pictures/paddle.png"); //Loads the paddle
+	player1->SetPosition((1024/2) - 45, 700); //Sets the paddle position
 
+	_gameObjectManager.Add("Paddle1", player1); //Adds the paddle object to our object manager. Identifier is "Paddle1"
 	_gameState = Game::ShowingSplash; //Switch to ShowingSplash state
 
 	while(!IsExiting()) { 
@@ -31,6 +33,10 @@ bool Game::IsExiting() { //Exiting state function
 }
 
 void Game::GameLoop() {
+
+	sf::Event currentEvent;
+	_mainWindow.pollEvent(currentEvent);
+
 	switch(_gameState) {
 		case Game::ShowingMenu: {
 			ShowMenu();
@@ -41,17 +47,16 @@ void Game::GameLoop() {
 			break;
 		}
 		case Game::Playing: {
-			sf::Event currentEvent;
-			while(_mainWindow.pollEvent(currentEvent)) {
-				_mainWindow.clear(sf::Color(0,0,0));
-				_player1.Draw(_mainWindow);	//Draws itself to the window
-				_mainWindow.display(); //Render everything drawn so far
-				
-				if(currentEvent.type == sf::Event::Closed) _gameState = Game::Exiting; //Closed requested event and exit game.
+			_mainWindow.clear(sf::Color(0,0,0));
+			
+			_gameObjectManager.DrawAll(_mainWindow); //Calls the draw method for every object in our manager
 
-				if(currentEvent.type == sf::Event::KeyPressed) { //If escape key is pressed, return to menu
-					if(currentEvent.key.code == sf::Keyboard::Escape) ShowMenu();
-				}
+			_mainWindow.display(); //Render everything drawn so far
+			
+			if(currentEvent.type == sf::Event::Closed) _gameState = Game::Exiting; //Closed requested event and exit game.
+
+			if(currentEvent.type == sf::Event::KeyPressed) { //If escape key is pressed, return to menu
+				if(currentEvent.key.code == sf::Keyboard::Escape) ShowMenu();
 			}
 			break;
 		}
@@ -79,4 +84,4 @@ void Game::ShowMenu() { //Renders menu
 
 Game::GameState Game::_gameState = Uninitialized; //initializing GameState and assigning it a default value of Unitialized
 sf::RenderWindow Game::_mainWindow;
-PlayerPaddle Game::_player1;
+GameObjectManager Game::_gameObjectManager;
